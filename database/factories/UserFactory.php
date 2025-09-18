@@ -2,6 +2,8 @@
 
 namespace Database\Factories;
 
+use App\Enums\RoleEnum;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -23,8 +25,12 @@ class UserFactory extends Factory
      */
     public function definition(): array
     {
+        $gender = rand(0, 1) ? 'male' : 'female';
+
         return [
-            'name' => fake()->name(),
+            'name' => fake()->name($gender),
+            'surname' => fake()->lastName($gender),
+            'phone' => fake()->unique()->e164PhoneNumber(),
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
@@ -35,10 +41,26 @@ class UserFactory extends Factory
     /**
      * Indicate that the model's email address should be unverified.
      */
-    public function unverified(): static
+    public function configure()
     {
-        return $this->state(fn (array $attributes) => [
-            'email_verified_at' => null,
-        ]);
+        return $this->afterCreating(function (User $user) {
+            if (! $user->hasAnyRole(RoleEnum::values())) {
+                $user->assignRole(RoleEnum::CUSTOMER->value);
+            }
+        });
+    }
+
+    public function admin(): static
+    {
+        return $this->afterCreating(function (User $user) {
+            $user->syncRoles([RoleEnum::ADMIN->value]);
+        });
+    }
+
+    public function moderator(): static
+    {
+        return $this->afterCreating(function (User $user) {
+            $user->syncRoles([RoleEnum::MODERATOR->value]);
+        });
     }
 }
