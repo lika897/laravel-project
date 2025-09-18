@@ -3,10 +3,11 @@
 namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Database\Seeders\OnDemand\AdminUser;
 use Database\Seeders\OnDemand\PermissionsAndRolesSeeder;
 use Illuminate\Database\Seeder;
 
-class DatabaseSeeder extends Seeder
+class onDemandSeeder extends Seeder
 {
     /**
      * Seed the application's database.
@@ -14,6 +15,7 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call(PermissionsAndRolesSeeder::class);
-        $this->call(CategoriesAndProducts::class);
+        $this->call(AdminUser::class);
+
     }
 }
