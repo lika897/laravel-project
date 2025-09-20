@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Enums\RoleEnum;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 
@@ -20,12 +21,17 @@ class LoginController extends Controller
 
     use AuthenticatesUsers;
 
+
     /**
-     * Where to redirect users after login.
-     *
-     * @var string
+     * @return string
      */
-    protected $redirectTo = '/home';
+    public function redirectTo(): string
+    {
+        $user = auth()->user();
+        return $user->hasRole(RoleEnum::CUSTOMER->value)
+            ? route('home')
+            : route('admin.dashboard');
+    }
 
     /**
      * Create a new controller instance.
