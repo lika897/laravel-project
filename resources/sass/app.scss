@@ -4,5 +4,77 @@
 // Variables
 @import 'variables';
 
+
+$primary: #b22222;
+$header-form: #f5f5f5;
+$secondary: #8b0000;
+$text-gray: #222323;
+//$body-bg: #f5f5f5;
+$body-bg: #fdfbfb;
+$form-bg: #ffffff;
+
+body {
+    background-color: $body-bg;
+    color: $text-gray;
+}
+
+.card {
+    background-color: $form-bg;
+    border-radius: 1.25rem;
+    box-shadow: 0 4px 6px rgba(44, 44, 44, 0.1);
+}
+
+.card-header {
+    //background-color: $header-form;
+    background-color: $form-bg !important;
+    color: $text-gray;
+    font-weight: 700;
+}
+.content-header {
+    background-color: $form-bg;
+    color: $text-gray;
+    font-weight: 700;
+}
+
+.card-body{
+    background-color: $form-bg;
+}
+
+.btn-primary {
+    background-color: $primary;
+    border: none;
+    border-radius: 0.75rem;
+    padding: 1rem;
+    font-size: 1.125rem;
+    width: 100%;
+    transition: background-color 0.3s ease;
+}
+
+.btn-primary:hover {
+    background-color: $secondary;
+}
+.text-graphite {
+    color: $text-gray !important;
+}
+.form-control:focus {
+    border-color: $text-gray !important;
+    box-shadow: 0 0 0 0.25rem rgba(34, 35, 35, 0.25) !important;
+    outline: none !important;
+}
+.text-lightgray {
+    $header-form: #f5f5f5;
+}
+
+.dropdown-item {
+    color: #222323;
+}
+
+.dropdown-item:hover,
+.dropdown-item:focus,
+.dropdown-item.active {
+    color: #222323 !important;
+    background-color: #e0e0e0 !important;
+}
+
 // Bootstrap
 @import 'bootstrap/scss/bootstrap';

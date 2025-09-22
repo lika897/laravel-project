@@ -71,7 +71,8 @@
                                     {{ Auth::user()->name }}
                                 </a>
 
-                                <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                                <div class="dropdown-menu dropdown-menu-end " aria-labelledby="navbarDropdown"
+                                     style="background-color: white">
                                     <a href="{{ route('home') }}" class="dropdown-item">
                                         Website
                                     </a>

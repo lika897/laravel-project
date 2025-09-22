@@ -4,5 +4,31 @@
 // Variables
 @import '../variables';
 
+$primary: #b22222;
+$header-form: #f5f5f5;
+$secondary: #8b0000;
+$text-gray: #222323;
+//$body-bg: #f5f5f5;
+$body-bg: #fdfbfb;
+$form-bg: #ffffff;
+
+.card-header {
+    //background-color: $header-form;
+    background-color: $form-bg !important;
+    color: $text-gray;
+    font-weight: 700;
+}
+.dropdown-item {
+    color: #222323;
+}
+
+.dropdown-item:hover,
+.dropdown-item:focus,
+.dropdown-item.active {
+    color: #222323 !important;
+    background-color: #e0e0e0 !important;
+}
+
+
 // Bootstrap
 @import 'bootstrap/scss/bootstrap';
