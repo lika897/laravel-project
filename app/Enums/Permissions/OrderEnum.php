@@ -2,20 +2,12 @@
 
 namespace App\Enums\Permissions;
 
+use App\Enums\Traits\Values;
+
 enum OrderEnum: string
 {
+    use Values;
     case EDIT = 'edit order';
     case DELETE = 'delete order';
 
-    public static function values(): array
-    {
-        $values = [];
-
-        foreach (self::cases() as $case) {
-            $values[] = $case->value;
-        }
-
-        return $values;
-
-    }
 }

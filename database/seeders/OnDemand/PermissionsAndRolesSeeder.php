@@ -5,7 +5,7 @@ namespace Database\Seeders\OnDemand;
 use App\Enums\Permissions\AccountEnum;
 use App\Enums\Permissions\CategoryEnum;
 use App\Enums\Permissions\OrderEnum;
-use App\Enums\Permissions\ProdectEnum;
+use App\Enums\Permissions\ProductEnum;
 use App\Enums\Permissions\UserEnum;
 use App\Enums\RoleEnum;
 use Illuminate\Database\Seeder;
@@ -22,7 +22,7 @@ class PermissionsAndRolesSeeder extends Seeder
             ...AccountEnum::values(),
             ...CategoryEnum::values(),
             ...OrderEnum::values(),
-            ...ProdectEnum::values(),
+            ...ProductEnum::values(),
             ...UserEnum::values(),
         ];
 
@@ -31,7 +31,7 @@ class PermissionsAndRolesSeeder extends Seeder
         }
 
         $this->createRoleAndSetPermissions(RoleEnum::CUSTOMER, [AccountEnum::values()]);
-        $this->createRoleAndSetPermissions(RoleEnum::MODERATOR, [...CategoryEnum::values(), ...ProdectEnum::values()]);
+        $this->createRoleAndSetPermissions(RoleEnum::MODERATOR, [...CategoryEnum::values(), ...ProductEnum::values()]);
         $this->createRoleAndSetPermissions(RoleEnum::ADMIN);
     }
 

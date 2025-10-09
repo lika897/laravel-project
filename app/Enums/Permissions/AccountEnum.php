@@ -2,20 +2,12 @@
 
 namespace App\Enums\Permissions;
 
+use App\Enums\Traits\Values;
+
 enum AccountEnum: string
 {
+    use Values;
     case EDIT = 'edit account';
     case DELETE = 'delete account';
 
-    public static function values(): array
-    {
-        $values = [];
-
-        foreach (self::cases() as $case) {
-            $values[] = $case->value;
-        }
-
-        return $values;
-
-    }
 }

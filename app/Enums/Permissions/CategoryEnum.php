@@ -2,21 +2,13 @@
 
 namespace App\Enums\Permissions;
 
+use App\Enums\Traits\Values;
+
 enum CategoryEnum: string
 {
+    use Values;
     case PUBLISH = 'publish category';
     case EDIT = 'edit category';
     case DELETE = 'delete category';
 
-    public static function values(): array
-    {
-        $values = [];
-
-        foreach (self::cases() as $case) {
-            $values[] = $case->value;
-        }
-
-        return $values;
-
-    }
 }
