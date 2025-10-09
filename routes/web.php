@@ -13,4 +13,14 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin|manager'
     Route::resource('categories', \App\Http\Controllers\Admin\CategoriesController::class)->except(['show']);
 
     Route::resource('products', \App\Http\Controllers\Admin\ProductsController::class)->except(['show']);
+
 });
+
+Route::prefix('ajax')->name('ajax.')
+    ->group(function (){
+        Route::delete('images/{image}', \App\Http\Controllers\Ajax\RemoveImageControlle::class)
+            ->middleware(['auth', 'role:admin|manager'])
+            ->name('images.destroy');
+    });
+
+

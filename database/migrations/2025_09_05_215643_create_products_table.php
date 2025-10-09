@@ -20,7 +20,7 @@ return new class extends Migration
             $table->float('price')->unsigned()->startingValue(1);
             $table->unsignedTinyInteger('discount')->nullable()->default(0);
             $table->unsignedSmallInteger('quantity')->default(0);
-            $table->text('thumbnail');
+            $table->text('thumbnail')->nullable();
             $table->timestamps();
 
             $table->fullText(['slug']);

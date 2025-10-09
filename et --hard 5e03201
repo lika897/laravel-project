@@ -1,0 +1,9 @@
+[33m79a62a8[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mstage_4[m[33m, [m[1;31morigin/stage_4[m[33m)[m HEAD@{0}: reset: moving to HEAD~1
+[33m5e03201[m HEAD@{1}: commit: Admin Products
+[33m79a62a8[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mstage_4[m[33m, [m[1;31morigin/stage_4[m[33m)[m HEAD@{2}: commit: Upgraded style in login and signup
+[33maa5305d[m[33m ([m[1;32mstage_3[m[33m)[m HEAD@{3}: checkout: moving from stage_3 to stage_4
+[33maa5305d[m[33m ([m[1;32mstage_3[m[33m)[m HEAD@{4}: commit: Registration
+[33m2166be4[m[33m ([m[1;31morigin/stage_3[m[33m, [m[1;32mstage_2[m[33m)[m HEAD@{5}: checkout: moving from stage_2 to stage_3
+[33m2166be4[m[33m ([m[1;31morigin/stage_3[m[33m, [m[1;32mstage_2[m[33m)[m HEAD@{6}: commit: Factories and Seeds
+[33m4198021[m[33m ([m[1;31morigin/stage_2[m[33m)[m HEAD@{7}: checkout: moving from stage_1 to stage_2
+[33m99e6548[m[33m ([m[1;31morigin/stage_1[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mstage_1[m[33m)[m HEAD@{8}: clone: from https://github.com/lika897/laravel-project.git
