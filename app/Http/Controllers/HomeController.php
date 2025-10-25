@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
+use App\Models\Product;
+
 class HomeController extends Controller
 {
     /**
@@ -11,7 +14,7 @@ class HomeController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth');
+//        $this->middleware('auth');
     }
 
     /**
@@ -21,7 +24,16 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('home');
+        $categories = Category::orderByDesc('id')->limit(5)->get();
+        $products = Product::orderByDesc('id')->limit(8)->get();
+
+        return view('home', compact('categories', 'products'));
+    }
+
+    public function show(Product $product, Category $category)
+    {
+        $category->load('products');
+        return view('categories.show', compact('category'));
     }
 
 }
