@@ -14,10 +14,23 @@ class Category extends Model
 
     protected $fillable = ['title', 'slug', 'parent_id'];
 
+    public function getRouteKeyName(): string
+    {
+//        return request()->wantsJson() ? 'id' : 'slug';
+        return request()->is('api/*') ? 'id' : 'slug';
+    }
+
+//    public function products(): BelongsToMany
+//    {
+//        return $this->hasMany(Product::class);
+//    }
+
+
     public function products(): BelongsToMany
     {
-        return $this->belongsToMany(Product::class);
+        return $this->belongsToMany(Product::class, 'category_product');
     }
+
 
     public function parent(): BelongsTo
     {
@@ -28,4 +41,7 @@ class Category extends Model
     {
         return $this->hasMany(Category::class, 'parent_id');
     }
+
+
+
 }

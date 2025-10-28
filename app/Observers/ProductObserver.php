@@ -40,12 +40,12 @@ class ProductObserver
             $disk->delete($product->thumbnail);
         }
 
-        foreach ($product->images as $image) {
-            if ($disk->exists($image->path)) {
-                $disk->delete($image->path);
-            }
-            $image->delete();
-        }
+//        foreach ($product->images as $image) {
+//            if ($disk->exists($image->path)) {
+//                $disk->delete($image->path);
+//            }
+//            $image->delete();
+//        }
 
         $thumbnailDir = dirname($product->thumbnail);
         if ($disk->exists($thumbnailDir) && count($disk->allFiles($thumbnailDir)) === 0) {

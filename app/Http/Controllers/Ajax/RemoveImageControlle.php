@@ -46,25 +46,4 @@ class RemoveImageControlle extends Controller
         }
     }
 
-
-//    public function __invoke(Image $image)
-//    {
-//        try {
-//            $image->deleteOrFail();
-//
-//            return response()->json([
-//                'message' => 'The image was successfully removed',
-//            ]);
-//
-//        } catch (\Throwable $th){
-//            logs()->error('[RemoveImageController]: ' . $th->getMessage(), [
-//                'image_id' => $image->id,
-//                'exception' => $th,
-//            ]);
-//
-//            return response()->json([
-//                'massage' => $th->getMessage(),
-//            ], 422);
-//        }
-//    }
 }

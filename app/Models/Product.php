@@ -31,15 +31,23 @@ class Product extends Model
         'thumbnail',
     ];
 
+    public function getRouteKeyName(): string
+    {
+        return request()->wantsJson() ? 'id' : 'slug';
+    }
+
     public function categories(): BelongsToMany
     {
-        return $this->belongsToMany(Category::class);
+        return $this->belongsToMany(Category::class, 'category_product');
     }
+
+
 
     public function images(): MorphMany
     {
         return $this->morphMany(Image::class, 'imageable');
     }
+
 
     public function thumbnailUrl(): Attribute
     {
@@ -63,5 +71,19 @@ class Product extends Model
                 }
             }
         );
+    }
+
+    public function finalPrice(): Attribute
+    {
+        return Attribute::get(function () {
+            $price = $this->price;
+            $discount = $this->discount;
+
+            if ($discount && $discount > 0 && $discount < 100) {
+                return round($price - ($price * $discount / 100), 2);
+            }
+
+            return $price;
+        });
     }
 }
