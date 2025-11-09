@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -9,19 +10,38 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Category extends Model
 {
+    use HasFactory;
+
     protected $fillable = ['title', 'slug', 'parent_id'];
+
+    public function getRouteKeyName(): string
+    {
+//        return request()->wantsJson() ? 'id' : 'slug';
+        return request()->is('api/*') ? 'id' : 'slug';
+    }
+
+//    public function products(): BelongsToMany
+//    {
+//        return $this->hasMany(Product::class);
+//    }
+
 
     public function products(): BelongsToMany
     {
-        return $this->belongsToMany(Product::class);
+        return $this->belongsToMany(Product::class, 'category_product');
     }
 
-    public function parent():BelongsTo
+
+    public function parent(): BelongsTo
     {
         return $this->belongsTo(Category::class, 'parent_id');
     }
-    public function children():HasMany
+
+    public function children(): HasMany
     {
         return $this->hasMany(Category::class, 'parent_id');
     }
+
+
+
 }
