@@ -6,6 +6,8 @@ namespace App\Providers;
 
 use App\Repositories\Contracts\ProductsRepositoryContract;
 use App\Repositories\ProductsRepository;
+use App\Services\CartService;
+use App\Services\Contracts\CartContract;
 use App\Services\Contracts\FileServiceContract;
 use App\Services\FileService;
 
@@ -18,6 +20,7 @@ class AppServiceProvider extends ServiceProvider
     public $bindings = [
         ProductsRepositoryContract::class => ProductsRepository::class,
         FileServiceContract::class => FileService::class,
+        CartContract::class => CartService::class,
 
     ];
 
@@ -29,6 +32,9 @@ class AppServiceProvider extends ServiceProvider
             \App\Services\Contracts\FileServiceContract::class,
             \App\Services\FileService::class
         );
+        $this->app->singleton('cart', function($app) {
+            return new \App\Services\CartService();
+});
 
     }
 

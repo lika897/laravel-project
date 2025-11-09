@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CartController;
 use App\Http\Controllers\CategoriesController;
 use Illuminate\Support\Facades\Route;
 
@@ -15,8 +16,31 @@ Route::get('products/{product:slug}', [\App\Http\Controllers\ProductsController:
 Route::get('categories/{category}/products', [CategoriesController::class, 'productsByCategory'])
     ->name('categories.products');
 Route::get('categories/{category}', [CategoriesController::class, 'show'])->name('categories.show');
+Route::get('/categories/{category:slug}', [CategoriesController::class, 'show'])
+    ->name('categories.show');
+
 
 Route::get('categories', [\App\Http\Controllers\CategoriesController::class, 'index'])->name('categories.index');
+
+Route::prefix('cart')->name('cart.')->group(function () {
+    Route::get('/', [CartController::class, 'index'])->name('index');
+
+    Route::post('add/{product}', [CartController::class, 'add'])->name('add');
+
+    Route::patch('{uuid}', [CartController::class, 'update'])->name('update');
+    Route::delete('{uuid}', [CartController::class, 'remove'])->name('remove');
+});
+
+
+Route::delete('clear', [\App\Http\Controllers\CartController::class, 'clear'])->name('clear');
+
+
+Route::get('/checkout', function() {
+    return view('checkout.index');
+})->name('checkout.index');
+
+
+
 
 //Admin
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin|manager'])->group(function (){

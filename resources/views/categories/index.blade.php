@@ -39,18 +39,29 @@
                             return;
                         }
 
+                        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
                         container.innerHTML = products.map(product => `
-                    <div class="col-md-3 mb-4">
-                        <div class="card h-100">
-                            <img src="${product.thumbnail_url ? product.thumbnail_url : 'placeholder.jpg'}" class="card-img-top" alt="${product.title}">
-                            <div class="card-body d-flex flex-column">
-                                <h5 class="card-title">${product.title}</h5>
-                                <p class="card-text mb-2">$${product.price.toFixed(2)}</p>
-                                <a href="/products/${product.slug}" class="btn btn-primary mt-auto btn-sm">View</a>
+                            <div class="col-md-3 mb-4">
+                                <div class="card h-100">
+                                    <img src="${product.thumbnail_url ? product.thumbnail_url : 'placeholder.jpg'}" class="card-img-top" alt="${product.title}">
+                                    <div class="card-body d-flex flex-column">
+                                        <h5 class="card-title">${product.title}</h5>
+                                        <p class="card-text mb-2">$${product.price.toFixed(2)}</p>
+                                        <a href="/products/${product.slug}" class="btn btn-primary mt-auto btn-sm mb-2">View</a>
+
+                                        <form action="/cart/add/${product.slug}" method="POST" class="mt-auto">
+                                            <input type="hidden" name="_token" value="${csrfToken}">
+                                            <input type="hidden" name="quantity" value="1">
+                                            <button type="submit" class="btn btn-outline-dark flex-grow-1 btn-hover-scale">Buy</button>
+                                        </form>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                    </div>
-                `).join('');
+                            `).join('');
+
+
+
                     })
                     .catch(error => {
                         console.error('Fetch error:', error);
@@ -58,5 +69,27 @@
                     });
             });
         });
+//Ajax
+        document.addEventListener('click', function(e){
+            if(e.target && e.target.matches('button.buy-btn')){
+                e.preventDefault();
+                const slug = e.target.dataset.slug;
+
+                fetch(`/cart/add/${slug}`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken,
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ quantity: 1 })
+                })
+                    .then(res => res.json())
+                    .then(data => alert('Product added to cart!'))
+                    .catch(err => console.error(err));
+            }
+        });
+
+
+
     </script>
 @endsection

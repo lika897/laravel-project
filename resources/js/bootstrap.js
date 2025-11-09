@@ -1,5 +1,6 @@
 import 'bootstrap';
-
+import { ds } from "laradumps-js";
+window.ds = ds;
 // import $ from 'jquery'
 // window.$ = $
 

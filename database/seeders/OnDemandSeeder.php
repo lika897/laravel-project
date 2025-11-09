@@ -2,12 +2,11 @@
 
 namespace Database\Seeders;
 
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Database\Seeders\OnDemand\AdminUser;
 use Database\Seeders\OnDemand\PermissionsAndRolesSeeder;
 use Illuminate\Database\Seeder;
 
-class onDemandSeeder extends Seeder
+class OnDemandSeeder extends Seeder
 {
     /**
      * Seed the application's database.
@@ -16,6 +15,5 @@ class onDemandSeeder extends Seeder
     {
         $this->call(PermissionsAndRolesSeeder::class);
         $this->call(AdminUser::class);
-
     }
 }

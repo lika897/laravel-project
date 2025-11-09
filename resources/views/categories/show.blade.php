@@ -3,6 +3,10 @@
 @section('content')
     <div class="container py-3">
         <h2 class="mb-4">Category: {{ $category->title }}</h2>
+{{--        <a href="{{ route('categories.show', $category->slug) }}"--}}
+{{--           class="btn btn-outline-primary category-btn">--}}
+{{--            {{ $category->title }}--}}
+{{--        </a>--}}
 
         @if($products->count())
             <div class="row row-cols-1 row-cols-md-3 g-4">
