@@ -8,29 +8,34 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Str;
 
-class CartService implements Contracts\CartContract
+class CartService implements CartContract
 {
-    protected ?Collection $items {
-        set(\Illuminate\Support\Collection|null $value) {
-            if (!$value) {
-                Session::forget('cart');
-            } else {
-                Session::put('cart', $value);
-            }
-        }
-        get {
-            return Session::get('cart', collect());
-        }
+
+
+    protected function getItems(): Collection
+    {
+        return Session::get('cart', collect());
     }
+
+
+    protected function setItems(Collection $items): void
+    {
+        Session::put('cart', $items);
+    }
+
     public function add(Product $product, int $quantity = 1): void
     {
-        if (!$this->items->where('id', $product->id)->isEmpty()) {
-            $this->items = $this->items->map(fn ($item) => $item['id'] === $product->id
-                ? $this->updateItemQty($item, ($item['quantity'] + $quantity))
+        $items = $this->getItems();
+
+        $existingItem = $items->firstWhere('id', $product->id);
+
+        if ($existingItem) {
+            $items = $items->map(fn ($item) => $item['id'] === $product->id
+                ? $this->updateItemQty($item, $item['quantity'] + $quantity)
                 : $item
             );
         } else {
-            $this->items = $this->items->add([
+            $items->push([
                 'uuid' => Str::uuid()->toString(),
                 'id' => $product->id,
                 'quantity' => $quantity,
@@ -39,62 +44,57 @@ class CartService implements Contracts\CartContract
                 'price' => $product->finalPrice,
                 'subTotal' => round($quantity * $product->finalPrice),
                 'thumbnailUrl' => $product->thumbnailUrl,
-
             ]);
         }
-    }
 
+        $this->setItems($items);
+    }
 
     public function remove(string $uuid): void
     {
-        $this->items = $this->items->filter(fn($item) => $item['uuid'] !== $uuid);
+        $items = $this->getItems()->filter(fn ($item) => $item['uuid'] !== $uuid)->values();
+        $this->setItems($items);
     }
 
     public function update(string $uuid, int $quantity): void
     {
-        $this->items = $this->items
-            ->map(fn ($item) => $item['uuid'] === $uuid
+        $items = $this->getItems()->map(fn ($item) => $item['uuid'] === $uuid
             ? $this->updateItemQty($item, $quantity)
-            : $item);
+            : $item
+        )->values();
+        $this->setItems($items);
     }
 
     public function all(): Collection
     {
-        return $this->items;
-//        return $this->items->map(fn($item) => (object) $item);
+        return $this->getItems();
     }
 
     public function subTotal(): float
     {
-        return round(
-            $this->items->sum('subTotal')
-        );
+        return round($this->getItems()->sum('subTotal'));
     }
 
     public function tax(): float
     {
-        return round(
-            $this->subTotal() * config('cart.tax') / 100
-        );
+        return round($this->subTotal() * config('cart.tax', 0) / 100);
     }
 
     public function total(): float
     {
-        return round(
-            $this->subTotal() + $this->tax()
-        );
+        return round($this->subTotal() + $this->tax());
     }
+
     public function clear(): void
     {
-        $this->items = null;
+        $this->setItems(collect());
     }
-
-
 
     public function count(): int
     {
-        return $this->items->sum('quantity');
+        return $this->getItems()->sum('quantity');
     }
+
     protected function updateItemQty(array $item, int $quantity): array
     {
         return [
@@ -104,10 +104,5 @@ class CartService implements Contracts\CartContract
             'slug' => $item['slug'],
             'thumbnailUrl' => $item['thumbnailUrl'] ?? null,
         ];
-
     }
-
 }
-
-
-
