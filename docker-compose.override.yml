@@ -1,0 +1,24 @@
+services:
+  pgsql:
+    ports:
+      - "5432:5432"  # PostgreSQL для IDE
+    volumes:
+      - "laravel-project_sail-pgsql:/var/lib/postgresql/data"
+
+  redis:
+    ports:
+      - "6379:6379"
+
+  meilisearch:
+    ports:
+      - "7700:7700"
+
+  mailpit:
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+
+volumes:
+  laravel-project_sail-pgsql:
+    driver: local
+
