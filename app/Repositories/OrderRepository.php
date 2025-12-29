@@ -13,6 +13,9 @@ use App\Repositories\Contracts\OrderRepositoryContracts;
 class OrderRepository implements Contracts\OrderRepositoryContracts
 {
 
+    /**
+     * @throws \Exception
+     */
     public function create(array $data): Order|false
     {
         $data = [
@@ -32,7 +35,22 @@ class OrderRepository implements Contracts\OrderRepositoryContracts
 
     public function setTransaction(string $vendorOrderId, PaymentSystemEnum $paymentSystem, TransactionStatusEnum $status):void
     {
-        // TODO: Implement setTransaction() method.
+        $order = Order::where('vendor_order_id', $vendorOrderId)->firstOrFail();
+
+        $order->transaction()->updateOrCreate([
+            'payment_system' => $paymentSystem,
+            'status' => $status,
+
+        ]);
+
+        $order->update([
+            'status' => match ($status) {
+                TransactionStatusEnum::Success => OrderStatusEnum::Paid,
+                TransactionStatusEnum::Cancelled => OrderStatusEnum::Cancelled,
+                default => OrderStatusEnum::InProcess,
+            },
+        ]);
+
     }
 
     protected function addProductsToOrder(Order $order): void
@@ -45,8 +63,8 @@ class OrderRepository implements Contracts\OrderRepositoryContracts
 
             $updatedQty = $product->quantity - $item['quantity'];
 
-            if ($updatedQty < 0 || $product->update(['quantity' => $updatedQty])){
-                throw new \Exception("Not enough quantity for pBroduct [$product->title]");
+            if ($updatedQty < 0 || !$product->update(['quantity' => $updatedQty])){
+                throw new \Exception("Not enough quantity for product [$product->title]");
             }
 
             $order->products()->attach(

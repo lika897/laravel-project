@@ -1,7 +1,9 @@
 <?php
 
+use App\Http\Controllers\Ajax\Payments\PaypalController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CategoriesController;
+use App\Http\Controllers\CheckoutController;
 use Illuminate\Support\Facades\Route;
 
 Auth::routes();
@@ -35,11 +37,19 @@ Route::prefix('cart')->name('cart.')->group(function () {
 Route::delete('clear', [\App\Http\Controllers\CartController::class, 'clear'])->name('clear');
 
 
-Route::get('/checkout', function() {
-    return view('checkout.index');
-})->name('checkout.index');
+//Route::get('/checkout', function() {
+//    return view('checkout.index');
+//})->name('checkout.index');
 
+Route::get('/checkout', CheckoutController::class)->name('checkout.index');
+//Route::get('orders/{vendorOrderId}/thank-you', \App\Http\Controllers\Pages\ThankYouController::class)->name('orders.thank-you');
 
+Route::get('orders/{vendorOrderId}/thank-you', \App\Http\Controllers\Pages\ThankYouController::class)->name('orders.thank-you');
+
+Route::middleware(['auth'])->group(function (){
+    Route::get('order/{vendorOrderId}/invoice', \App\Http\Controllers\InvoicesController::class)->name('order.invoice');
+
+});
 
 
 //Admin
@@ -58,5 +68,8 @@ Route::prefix('ajax')->name('ajax.')
             ->middleware(['auth', 'role:admin|manager'])
             ->name('images.destroy');
     });
-
+Route::prefix('ajax/paypal')->group(function () {
+    Route::post('/order', [PaypalController::class, 'create']);
+    Route::post('/order/{orderId}/capture', [PaypalController::class, 'capture']);
+});
 

@@ -16,6 +16,11 @@ class PaypalService implements PaypalServiceContract
         $this->paypal = app(PayPal::class);
         $this->paypal->setApiCredentials(config('paypal'));
         $this->paypal->setAccessToken($this->paypal->getAccessToken());
+//        $this->paypal = new PayPalClient;
+//
+//        $this->paypal->setApiCredentials(config('paypal'));
+//        $this->paypal->getAccessToken();
+
     }
 
     public function create(): ?string
@@ -27,12 +32,19 @@ class PaypalService implements PaypalServiceContract
         logs()->info('[Paypal::create] Getting paypal order', [
             'response' => $paypalOrder
         ]);
+
         return $paypalOrder['id'] ?? null;
     }
 
     public function capture(string $vendorOrderId): TransactionStatusEnum
     {
-        return TransactionStatusEnum::Pending;
+        $result = $this->capture($vendorOrderId);
+
+        return match ($result['status']) {
+            'COMPLETED', 'APPROVED' => TransactionStatusEnum::Success,
+            'CREATE', 'SAVED' => TransactionStatusEnum::Pending,
+            default => TransactionStatusEnum::Cancelled
+        };
     }
 
 //    protected function buildOrderRequestDate(): array
@@ -91,26 +103,33 @@ class PaypalService implements PaypalServiceContract
         $currencyCode = config('paypal.currency');
 
         $items = [];
+        $itemSubtotal = 0;
+        $taxTotal = 0;
 
-        Cart::all()->each(function ($item) use (&$items, $currencyCode) {
+        foreach (Cart::all() as $item) {
+            $itemTotalValue = $item['price'] * $item['quantity'];
+            $itemTaxValue = ($item['price'] * config('cart.tax') / 100) * $item['quantity'];
+
+            $itemSubtotal += $itemTotalValue;
+            $taxTotal += $itemTaxValue;
+
             $items[] = [
                 'name' => $item['title'],
-                'quantity' => $item['quantity'],
-                'sku' => $item['sku'],
-                'url' => url(route('products.show', $item['slug'])),
-                'category' => 'PHYSICAL_GOODS',
                 'unit_amount' => [
                     'currency_code' => $currencyCode,
-                    'value' => round($item['price'], 2),
+                    'value' => number_format($item['price'], 2, '.', ''),
                 ],
+                'quantity' => (string) $item['quantity'],
                 'tax' => [
                     'currency_code' => $currencyCode,
-                    'value' => round(
-                        $item['price'] * config('cart.tax') / 100, 2
-                    ),
-                ]
+                    'value' => number_format($item['price'] * config('cart.tax') / 100, 2, '.', ''),
+                ],
+                'sku' => (string) $item['id'],
+                'category' => 'PHYSICAL_GOODS'
             ];
-        });
+        }
+
+        $totalValue = $itemSubtotal + $taxTotal;
 
         return [
             'intent' => 'CAPTURE',
@@ -118,22 +137,23 @@ class PaypalService implements PaypalServiceContract
                 [
                     'amount' => [
                         'currency_code' => $currencyCode,
-                        'value' => Cart::total(),
+                        'value' => number_format($totalValue, 2, '.', ''),
                         'breakdown' => [
                             'item_total' => [
                                 'currency_code' => $currencyCode,
-                                'value' => Cart::subTotal(),
+                                'value' => number_format($itemSubtotal, 2, '.', ''),
                             ],
                             'tax_total' => [
                                 'currency_code' => $currencyCode,
-                                'value' => Cart::tax(),
-                            ]
-                        ]
+                                'value' => number_format($taxTotal, 2, '.', ''),
+                            ],
+                        ],
                     ],
                     'items' => $items
                 ]
             ]
         ];
     }
+
 
 }

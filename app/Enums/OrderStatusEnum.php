@@ -12,4 +12,6 @@ enum OrderStatusEnum: string
     case Completed = 'Completed';
     case Cancelled = 'Cancelled';
     case Paid = 'Paid';
+    case Failed_Transaction = 'Failed Transaction';
+
 }

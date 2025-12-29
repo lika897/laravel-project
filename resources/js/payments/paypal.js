@@ -5,24 +5,37 @@ const selectors = {
 }
 
 function getFields() {
-    return $('#checkout-form').serializeArray().reduce((obj, item) => {
-        obj[item.name] = item.value
-        return obj
-    }, {})
+    // return $('#checkout-form').serializeArray().reduce((obj, item) => {
+    //     obj[item.name] = item.value
+    //     return obj
+    // }, {})
+    const fields = $('#checkout-form').serializeArray().reduce((obj, item) => {
+        obj[item.name] = item.value;
+        return obj;
+    }, {});
+
+    fields.name = (fields.first_name || '') + ' ' + (fields.last_name || '');
+    return fields;
 }
 
 function isEmptyFields() {
     let result = false
     const fields = getFields()
 
-    Object.keys(fields).map((key) => {
-        if (fields[key].length < 1){
-            // $(`${selectors.form} input[name="${key}"]`).addClass('is-invalid')
-            $(`${selectors.form} [name="${key}"]`).addClass('is-invalid')
-
-            result = true
+    // Object.keys(fields).map((key) => {
+    //     if (fields[key].length < 1){
+    //         // $(`${selectors.form} input[name="${key}"]`).addClass('is-invalid')
+    //         $(`${selectors.form} [name="${key}"]`).addClass('is-invalid')
+    //
+    //         result = true
+    //     }
+    // })
+    Object.keys(fields).forEach((key) => {
+        if (!fields[key] || fields[key].length < 1) {
+            $(`${selectors.form} [name="${key}"]`).addClass('is-invalid');
+            result = true;
         }
-    })
+    });
     return result
 }
 paypal.Buttons({
@@ -72,17 +85,23 @@ paypal.Buttons({
 
 
     // Call your server to set up the transaction
-    createOrder: function(data, actions) {
+    createOrder: function (data, actions) {
         return axios.post('/ajax/paypal/order', getFields())
             .then(res => {
-                const { data } = res
-                console.log('createOrder response: ', res)
-                return data.id
+                console.log('createOrder response:', res.data);
+
+                if (!res.data.id) {
+                    throw new Error('PayPal order id not returned');
+                }
+
+                return res.data.id;
             })
             .catch(err => {
-                console.error('createOrder error: ', err)
-            })
+                console.error('createOrder error:', err);
+                throw err;
+            });
     },
+
 
 
     // Call your server to finalize the transaction
@@ -90,6 +109,13 @@ paypal.Buttons({
         return axios.post('/ajax/paypal/order/' + data.orderID + '/capture/', {})
             .then(function(res) {
                 const orderData = res.data
+
+                iziToast.success({
+                    title: 'Order was created',
+                    position: 'topCenter'
+                })
+
+                console.log('orderData', orderData)
 
             // return res.json();
         }).catch(function(orderData) {
@@ -128,3 +154,10 @@ paypal.Buttons({
     }
 
 }).render('#paypal-button-container');
+
+window.getFields = getFields
+window.isEmptyFields = isEmptyFields
+$(selectors.form).trigger('input');
+
+
+

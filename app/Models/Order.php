@@ -3,14 +3,17 @@
 namespace App\Models;
 
 use App\Enums\OrderStatusEnum;
+use App\Policies\OrderPolicy;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
+#[UsePolicy(OrderPolicy::class)]
 class Order extends Model
 {
-    protected $quarded = [];
+    protected $guarded = [];
 
     protected $casts = [
         'status' => OrderStatusEnum::class,

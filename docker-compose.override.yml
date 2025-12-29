@@ -20,4 +20,5 @@ services:
 
 volumes:
   laravel-project_sail-pgsql:
-    external: true
+    driver: local
+

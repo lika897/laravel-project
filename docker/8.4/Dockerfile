@@ -63,8 +63,8 @@ RUN userdel -r ubuntu
 RUN groupadd --force -g $WWWGROUP sail
 RUN useradd -ms /bin/bash --no-user-group -g $WWWGROUP -u 1337 sail
 
-RUN pecl install redis \
-    && docker-php-ext-enable redis \
+#RUN pecl install redis \
+#    && docker-php-ext-enable redis \
 
 COPY start-container /usr/local/bin/start-container
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf

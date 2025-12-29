@@ -44,7 +44,9 @@ class CartService implements CartContract
                 'price' => $product->finalPrice,
                 'subTotal' => round($quantity * $product->finalPrice),
                 'thumbnailUrl' => $product->thumbnailUrl,
-            ]);
+                'sku' => $product->SKU,
+            ]
+            );
         }
 
         $this->setItems($items);

@@ -12,7 +12,7 @@ interface OrderRepositoryContracts
     public function create( array $data): Order|false;
 
     public function setTransaction(
-        string$vendorOrderId,
+        string $vendorOrderId,
         PaymentSystemEnum $paymentSystem,
         TransactionStatusEnum $status
     );

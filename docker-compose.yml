@@ -51,6 +51,7 @@ services:
                 - '${DB_USERNAME}'
             retries: 3
             timeout: 5s
+
     redis:
         image: 'redis:alpine'
         ports:
