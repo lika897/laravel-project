@@ -12,6 +12,7 @@
         "laravel/tinker": "^2.10.1",
         "laravel/ui": "^4.6",
         "laraveldaily/laravel-invoices": "^4.1",
+        "league/csv": "^9.27.0",
         "paypal/rest-api-sdk-php": "^1.6",
         "spatie/laravel-permission": "^6.21",
         "srmklive/paypal": "~3.0"

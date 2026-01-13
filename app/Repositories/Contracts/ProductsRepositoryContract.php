@@ -9,4 +9,5 @@ interface ProductsRepositoryContract
     public function store(Request $request): Product|false;
 
     public function update($request, Product $product): Product;
+
 }

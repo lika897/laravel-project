@@ -8,6 +8,13 @@ use Illuminate\Support\Facades\Route;
 
 Auth::routes();
 
+Route::get('/mailable', function () {
+    $order = App\Models\Order::firstOrFail();
+
+    return new App\Mail\Enduser\OrderCreatedMail($order);
+});
+
+
 Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
 //Products
@@ -59,6 +66,8 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin|manager'
     Route::resource('categories', \App\Http\Controllers\Admin\CategoriesController::class)->except(['show']);
 
     Route::resource('products', \App\Http\Controllers\Admin\ProductsController::class)->except(['show']);
+
+    Route::get('products/export', [\App\Http\Controllers\Admin\ProductsController::class, 'export'])->name('products.export');
 
 });
 

@@ -10,6 +10,7 @@ use App\Models\Category;
 use App\Models\Product;
 use App\Repositories\ProductsRepository;
 use App\Repositories\Contracts\ProductsRepositoryContract;
+use App\Services\Contracts\ProductsExportServiceContract;
 use Illuminate\Http\Request;
 
 class ProductsController extends Controller
@@ -78,6 +79,18 @@ class ProductsController extends Controller
                 'user_id' => auth()->id(),
             ]);
             return redirect()->back();
+        }
+    }
+
+    public function export(ProductsExportServiceContract $service)
+    {
+        try {
+            $service->export(auth()->user());
+            return redirect()->route('admin.products.index')
+                ->with('success', 'Export in process');
+        } catch (\Throwable $throwable) {
+            return redirect()->back()
+                ->with('error', 'Export failed');
         }
     }
 }

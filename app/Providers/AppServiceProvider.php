@@ -11,8 +11,9 @@ use App\Services\Contracts\CartContract;
 use App\Services\Contracts\FileServiceContract;
 use App\Services\Contracts\InvoiceServiceContract;
 use App\Services\Contracts\PaypalServiceContract;
+use App\Services\Contracts\ProductsExportServiceContract;
 use App\Services\FileService;
-
+use App\Services\ProductsExportService;
 use App\Services\InvoiceService;
 use App\Services\PaypalService;
 use Illuminate\Pagination\Paginator;
@@ -31,6 +32,7 @@ class AppServiceProvider extends ServiceProvider
         OrderRepositoryContracts::class => OrderRepository::class,
         PaypalServiceContract::class => PaypalService::class,
         InvoiceServiceContract::class => InvoiceService::class,
+        ProductsExportServiceContract::class => ProductsExportService::class,
 
 
     ];
