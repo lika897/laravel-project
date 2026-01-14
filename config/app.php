@@ -123,4 +123,8 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    'aliases' => \Illuminate\Support\Facades\Facade::defaultAliases()->merge([
+        'Cart' => App\Facades\Cart::class,
+    ])->toArray(),
+
 ];

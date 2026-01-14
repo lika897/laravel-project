@@ -22,7 +22,6 @@ return new class extends Migration
                 ->constrained('products')
                 ->cascadeOnDelete();
 
-
             $table->timestamps();
         });
     }
