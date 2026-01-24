@@ -1,0 +1,18 @@
+#!/bin/sh
+
+echo "🔍 Running Laravel Pint code style fixer..."
+
+# Run Pint and capture output
+./vendor/bin/pint
+
+# Check for any remaining unstaged changes
+CHANGES=$(git diff --name-only)
+
+if [ -n "$CHANGES" ]; then
+  echo "✅ Laravel Pint has fixed style issues."
+  echo "📌 Some files were modified. Adding updated files to commit..."
+  git add $CHANGES
+fi
+
+echo "✨ Code style ok. Continuing commit."
+exit 0

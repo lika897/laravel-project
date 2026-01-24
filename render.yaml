@@ -1,0 +1,82 @@
+databases:
+  - name: app-db
+    plan: free
+    region: frankfurt
+    databaseName: appdb
+    user: appuser
+
+services:
+  - type: keyvalue
+    name: app-redis
+    plan: free
+    region: frankfurt
+    ipAllowList: []
+
+  - type: web
+    name: Application
+    runtime: docker
+    repo: https://github.com/DenisRozganyaev/NT_Laravel_08_25
+    branch: main
+    region: frankfurt
+    plan: starter
+    autoDeploy: true
+    healthCheckPath: /up
+
+    preDeployCommand: /bin/bash -c php artisan config:clear && php artisan db:migrate --force
+
+    envVars:
+      - key: APP_ENV
+        value: local
+      - key: APP_KEY
+        value: base64:QBMvWKuw2q7ljDw40Mvu73ZE1V4mg45JLuPq0Q2Usr8=
+      - key: QUEUE_CONNECTION
+        value: redis
+      - key: CACHE_DRIVER
+        value: redis
+      - key: SESSION_DRIVER
+        value: redis
+      - key: LOG_CHANNEL
+        value: stderr
+      - key: DATABASE_URL
+        fromDatabase:
+          name: app-db
+          property: connectionString
+      - key: DB_HOST
+        fromDatabase:
+          name: app-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: app-db
+          property: port
+      - key: DB_DATABASE
+        fromDatabase:
+          name: app-db
+          property: database
+      - key: DB_USERNAME
+        fromDatabase:
+          name: app-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: app-db
+          property: password
+      - key: REDIS_URL
+        fromService:
+          type: keyvalue
+          name: app-redis
+          property: connectionString
+      - key: REDIS_HOST
+        fromService:
+          type: keyvalue
+          name: app-redis
+          property: host
+      - key: REDIS_PORT
+        fromService:
+          type: keyvalue
+          name: app-redis
+          property: port
+      - key: REDIS_PASSWORD
+        value: ""
+      - key: REDIS_CLIENT
+        value: predis
