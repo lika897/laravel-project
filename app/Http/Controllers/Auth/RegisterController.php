@@ -47,6 +47,6 @@ class RegisterController extends Controller
 
         return $request->wantsJson()
             ? new JsonResponse([], 201)
-            : $this->redirect($this->redirectPath());
+            : redirect()->to($this->redirectPath());
     }
 }

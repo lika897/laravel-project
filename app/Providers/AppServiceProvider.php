@@ -4,6 +4,8 @@ namespace App\Providers;
 
 
 
+use App\Models\Product;
+use App\Policies\Api\v1\ProductPolicy;
 use App\Repositories\Contracts\ProductsRepositoryContract;
 use App\Repositories\ProductsRepository;
 use App\Services\CartService;
@@ -17,6 +19,7 @@ use App\Services\ProductsExportService;
 use App\Services\InvoiceService;
 use App\Services\PaypalService;
 use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 use App\Repositories\Contracts\OrderRepositoryContracts;
 use App\Repositories\OrderRepository;
@@ -62,5 +65,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Paginator::useBootstrapFive();
+
+        Gate::policy(Product::class, ProductPolicy::class);
     }
 }

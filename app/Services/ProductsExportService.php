@@ -29,7 +29,7 @@ class ProductsExportService implements ProductsExportServiceContract
 
         $products = Product::lazyById()->pluck('id')->chunk(25);
 
-        $writeFilesBatch = Bus::batch(
+        Bus::batch(
             $products->values()->map(function ($chunk, $index) use ($folder, $disk) {
                 return new WriteLocalFile(
                     $folder . "products-{$index}.csv",
@@ -37,14 +37,14 @@ class ProductsExportService implements ProductsExportServiceContract
                     $disk
                 );
             })
-        )->onQueue(QueuesEnum::ExportWriteLocal->value)
+        )
+            ->onQueue(QueuesEnum::ExportWriteLocal->value)
             ->catch(function (\Throwable $e) use ($userId) {
                 logs()->error('[ProductsExportService] Batch failed: ' . $e->getMessage(), [
                     'user_id' => $userId,
                 ]);
             })
             ->then(function () use ($folder, $disk, $user) {
-
                 SaveToS3Job::dispatch($folder, $disk);
                 $user->notify(new ProductsExportNotification(
                     csvFile: $folder . 'products.csv'
@@ -52,6 +52,7 @@ class ProductsExportService implements ProductsExportServiceContract
             })
             ->onQueue(QueuesEnum::ProductsExport->value)
             ->dispatch();
+
     }
 
 

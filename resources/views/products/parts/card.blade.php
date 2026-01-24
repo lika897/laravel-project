@@ -1,7 +1,7 @@
 <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
     <div class="card product-card h-100 shadow-sm d-flex flex-column fade-up position-relative">
 
-        {{-- Уведомление на карточке --}}
+
         @if(session('success') && session('product_added_id') == $product->id)
             <div class="alert alert-success product-alert position-absolute top-0 start-50 translate-middle-x mt-2">
                 {{ session('success') }}
