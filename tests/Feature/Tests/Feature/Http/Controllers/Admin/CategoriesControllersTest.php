@@ -113,6 +113,123 @@ class CategoriesControllersTest extends TestCase
         $this->assertDatabaseEmpty('categories');
     }
 
+    #[Test]
+    public function create_form_is_accessible_for_admin(): void
+    {
+        $response = $this->actingAs($this->user(RoleEnum::ADMIN))
+            ->get(route('admin.categories.create'));
+
+        $response->assertSuccessful();
+        $response->assertViewIs('admin.categories.create');
+    }
+
+    #[Test]
+    public function create_form_is_forbidden_for_customer(): void
+    {
+        $response = $this->actingAs($this->user(RoleEnum::CUSTOMER))
+            ->get(route('admin.categories.create'));
+
+        $response->assertForbidden();
+    }
+
+    #[Test]
+    public function edit_form_is_accessible_for_admin(): void
+    {
+        $category = Category::factory()->create();
+
+        $response = $this->actingAs($this->user(RoleEnum::ADMIN))
+            ->get(route('admin.categories.edit', $category));
+
+        $response->assertSuccessful();
+        $response->assertViewIs('admin.categories.edit');
+    }
+
+    #[Test]
+    public function edit_form_is_forbidden_for_customer(): void
+    {
+        $category = Category::factory()->create();
+
+        $response = $this->actingAs($this->user(RoleEnum::CUSTOMER))
+            ->get(route('admin.categories.edit', $category));
+
+        $response->assertForbidden();
+    }
+    #[Test]
+    public function admin_can_update_category_with_valid_data(): void
+    {
+        $category = Category::factory()->create([
+            'title' => 'Old Title'
+        ]);
+
+        $data = ['title' => 'New Title'];
+
+        $response = $this->actingAs($this->user(RoleEnum::ADMIN))
+            ->put(route('admin.categories.update', $category), $data);
+
+        $response->assertRedirect(route('admin.categories.index'));
+        $this->assertDatabaseHas('categories', $data);
+    }
+
+//    #[Test]
+//    public function admin_cannot_update_category_with_invalid_data(): void
+//    {
+//        $category = Category::factory()->create([
+//            'title' => 'Old Title'
+//        ]);
+//
+//        $data = ['title' => '1'];
+//
+//        $response = $this->actingAs($this->user(RoleEnum::ADMIN))
+//            ->put(route('admin.categories.update', $category), $data);
+//
+//        $response->assertSessionHasErrors('title');
+//        $this->assertDatabaseHas('categories', ['title' => 'Old Title']);
+//    }
+
+    #[Test]
+    public function customer_cannot_update_category(): void
+    {
+        $category = Category::factory()->create([
+            'title' => 'Old Title'
+        ]);
+
+        $data = ['title' => 'New Title'];
+
+        $response = $this->actingAs($this->user(RoleEnum::CUSTOMER))
+            ->put(route('admin.categories.update', $category), $data);
+
+        $response->assertForbidden();
+        $this->assertDatabaseHas('categories', ['title' => 'Old Title']);
+    }
+
+    #[Test]
+    public function admin_can_delete_category(): void
+    {
+        $category = Category::factory()->create();
+
+        $response = $this->actingAs($this->user(RoleEnum::ADMIN))
+            ->delete(route('admin.categories.destroy', $category));
+
+        $response->assertRedirect(route('admin.categories.index'));
+        $this->assertDatabaseMissing('categories', ['id' => $category->id]);
+    }
+
+    #[Test]
+    public function customer_cannot_delete_category(): void
+    {
+        $category = Category::factory()->create();
+
+        $response = $this->actingAs($this->user(RoleEnum::CUSTOMER))
+            ->delete(route('admin.categories.destroy', $category));
+
+        $response->assertForbidden();
+        $this->assertDatabaseHas('categories', ['id' => $category->id]);
+    }
+
+
+
+
+
 
 
 
